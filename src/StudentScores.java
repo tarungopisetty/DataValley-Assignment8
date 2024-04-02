@@ -1,78 +1,61 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-class Student {
-    private String name;
-    private double score;
-
-    public Student(String name, double score) {
-        this.name = name;
-        this.score = score;
-    }
-
-    public double getScore() {
-        return score;
-    }
-}
+import java.util.*;
 
 public class StudentScores {
+
     public static void main(String[] args) {
-        List<Student> students = new ArrayList<>();
-        students.add(new Student("John", 85));
-        students.add(new Student("Alice", 92));
-        students.add(new Student("Bob", 78));
-        students.add(new Student("Carol", 63));
-        students.add(new Student("David", 75));
-        students.add(new Student("Emma", 80));
-        students.add(new Student("Frank", 88));
+        Scanner scanner = new Scanner(System.in);
 
-        double totalScore = 0;
-        List<Double> scores = new ArrayList<>();
-
-        for (Student student : students) {
-            totalScore += student.getScore();
-            scores.add(student.getScore());
+        // Accepting test scores from the user
+        System.out.print("Enter the number of students: ");
+        int numStudents = scanner.nextInt();
+        int[] scores = new int[numStudents];
+        System.out.println("Enter the test scores for each student:");
+        for (int i = 0; i < numStudents; i++) {
+            System.out.print("Student " + (i + 1) + ": ");
+            scores[i] = scanner.nextInt();
         }
 
-        double averageScore = totalScore / students.size();
+        // Calculating average
+        double sum = 0;
+        for (int score : scores) {
+            sum += score;
+        }
+        double average = sum / numStudents;
 
-        Collections.sort(scores);
+        // Sorting scores
+        Arrays.sort(scores);
 
-        int belowAverageCount = 0;
-        int atAverageCount = 0;
+        // Calculating median
+        double median;
+        if (numStudents % 2 == 0) {
+            median = (scores[numStudents / 2 - 1] + scores[numStudents / 2]) / 2.0;
+        } else {
+            median = scores[numStudents / 2];
+        }
+
+        // Counting scores above, at, and below average
         int aboveAverageCount = 0;
-
-        for (double score : scores) {
-            if (score < averageScore) {
-                belowAverageCount++;
-            } else if (score == averageScore) {
+        int atAverageCount = 0;
+        int belowAverageCount = 0;
+        for (int score : scores) {
+            if (score > average) {
+                aboveAverageCount++;
+            } else if (score == average) {
                 atAverageCount++;
             } else {
-                aboveAverageCount++;
+                belowAverageCount++;
             }
         }
 
-        double medianBelowAverage = median(scores.subList(0, belowAverageCount));
-        double medianAtAverage = median(scores.subList(belowAverageCount, belowAverageCount + atAverageCount));
-        double medianAboveAverage = median(scores.subList(belowAverageCount + atAverageCount, students.size()));
+        // Outputting results
+        System.out.println("\nResults:");
+        System.out.println("Number of students above average: " + aboveAverageCount);
+        System.out.println("Median score for students above average: " + median);
+        System.out.println("Number of students at average: " + atAverageCount);
+        System.out.println("Median score for students at average: " + median);
+        System.out.println("Number of students below average: " + belowAverageCount);
+        System.out.println("Median score for students below average: " + median);
 
-        System.out.println("Number of students who scored:");
-        System.out.println("Above the average: " + aboveAverageCount);
-        System.out.println("At the average: " + atAverageCount);
-        System.out.println("Below the average: " + belowAverageCount);
-        System.out.println("\nMedian score for each group:");
-        System.out.println("Above the average: " + medianAboveAverage);
-        System.out.println("At the average: " + medianAtAverage);
-        System.out.println("Below the average: " + medianBelowAverage);
-    }
-
-    private static double median(List<Double> numbers) {
-        int middle = numbers.size() / 2;
-        if (numbers.size() % 2 == 1) {
-            return numbers.get(middle);
-        } else {
-            return (numbers.get(middle - 1) + numbers.get(middle)) / 2.0;
-        }
+        scanner.close();
     }
 }
